@@ -1,0 +1,117 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier location #{{ order.id }}{% endblock %}
+
+{% block breadcrumb %}
+  {% include 'partials/_breadcrumb.html.twig' with { items: [
+    { label: 'Accueil', url: path('home_index') },
+    { label: 'Locations', url: path('order_index') },
+    { label: '#'~order.id, url: path('order_show', {id: order.id}) },
+    { label: 'Modifier', url: '#' }
+  ] } %}
+{% endblock %}
+
+{% block body %}
+<div class="card">
+  <h1 style="margin-top:0">Modifier location #{{ order.id }}</h1>
+  <form method="post">
+    <div class="form-group">
+      <label class="form-label">Nom du client</label>
+      <input type="text" name="customerName" class="form-control" required value="{{ order.customerName }}" />
+    </div>
+
+    <h3>Articles</h3>
+    <div id="items"></div>
+    <div style="margin-top:8px">
+      <button type="button" class="btn btn-outline" id="addItemBtn">Ajouter un autre matériel</button>
+    </div>
+
+    <div style="display:flex; gap:8px; margin-top:12px">
+      <button class="btn btn-primary">Enregistrer</button>
+      <a href="{{ path('order_show', {id: order.id}) }}" class="btn btn-outline">Annuler</a>
+    </div>
+  </form>
+</div>
+
+<script>
+  (function(){
+    const itemsEl = document.getElementById('items');
+    const addBtn = document.getElementById('addItemBtn');
+    let index = 0;
+
+    const options = [
+      {% for choice in prototype.equipment.vars.choices %}
+        (function(){ return { value: '{{ choice.value }}', label: '{{ choice.data.name|e('js') }} — stock: {{ choice.data.quantityAvailable }} — {{ (choice.data.pricePerDay)|money|e('js') }}', disabled: {{ choice.data.quantityAvailable == 0 ? 'true' : 'false' }} }; })(),
+      {% endfor %}
+    ];
+
+    function addRow(defaultEquipmentId, defaultQty){
+      const i = index++;
+      const row = document.createElement('div');
+      row.className = 'grid';
+      row.style.gridTemplateColumns = '2fr 1fr auto';
+      row.style.gap = '12px';
+      row.style.marginBottom = '10px';
+
+      const col1 = document.createElement('div');
+      col1.innerHTML = '<label class="form-label" for="item_'+i+'_equipment">Matériel</label>';
+      const select = document.createElement('select');
+      select.id = 'item_'+i+'_equipment';
+      select.name = 'items['+i+'][equipment]';
+      select.className = 'form-control';
+      const empty = document.createElement('option');
+      empty.value = '';
+      empty.textContent = '-- choisir --';
+      select.appendChild(empty);
+      options.forEach(function(opt){
+        const o = document.createElement('option');
+        o.value = opt.value;
+        o.textContent = opt.label;
+        if (opt.disabled) o.disabled = true;
+        if (defaultEquipmentId && String(defaultEquipmentId) === String(opt.value)) o.selected = true;
+        select.appendChild(o);
+      });
+      col1.appendChild(select);
+      const help = document.createElement('div');
+      help.className = 'form-help';
+      help.textContent = 'Sélectionnez un matériel (stock et prix affichés).';
+      col1.appendChild(help);
+
+      const col2 = document.createElement('div');
+      col2.innerHTML = '<label class="form-label" for="item_'+i+'_qty">Quantité</label>';
+      const qty = document.createElement('input');
+      qty.type = 'number';
+      qty.min = '0';
+      qty.step = '1';
+      qty.placeholder = '0';
+      qty.className = 'form-control';
+      qty.id = 'item_'+i+'_qty';
+      qty.name = 'items['+i+'][quantity]';
+      if (defaultQty) qty.value = String(defaultQty);
+      col2.appendChild(qty);
+
+      const col3 = document.createElement('div');
+      const removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.className = 'btn btn-outline';
+      removeBtn.textContent = 'Supprimer';
+      removeBtn.addEventListener('click', function(){ row.remove(); });
+      col3.appendChild(removeBtn);
+
+      row.appendChild(col1);
+      row.appendChild(col2);
+      row.appendChild(col3);
+      itemsEl.appendChild(row);
+    }
+
+    addBtn.addEventListener('click', function(){ addRow(null, null); });
+    // Prefill existing items
+    {% for it in order.items %}
+      addRow({{ it.equipment.id }}, {{ it.quantity }});
+    {% endfor %}
+    if (index === 0) { addRow(null, null); }
+  })();
+</script>
+{% endblock %}
+
+

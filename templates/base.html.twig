@@ -1,0 +1,36 @@
+{% set current = app.request.get('_route') %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}lac de Poses{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ asset('assets/app.css') }}">
+  {% block styles %}{% endblock %}
+</head>
+<body>
+<header class="navbar">
+  <div class="inner">
+    <a class="brand" href="{{ path('home_index') }}">
+      <span class="brand-badge">LP</span> lac de Poses
+    </a>
+    <nav class="nav">
+      <a href="{{ path('home_index') }}" {% if current=='home_index' %}aria-current="page"{% endif %}>Accueil</a>
+      <a href="{{ path('equipment_index') }}" {% if current starts with 'equipment_' %}aria-current="page"{% endif %}>Matériel</a>
+      <a href="{{ path('order_index') }}" {% if current starts with 'order_' %}aria-current="page"{% endif %}>Locations</a>
+    </nav>
+  </div>
+</header>
+
+<main class="container main">
+  {% for label, messages in app.flashes %}
+    {% for m in messages %}<div class="flash {{ label }}">{{ m|raw }}</div>{% endfor %}
+  {% endfor %}
+  {% block body %}{% endblock %}
+</main>
+
+<footer class="container" style="opacity:.6;font-size:14px;padding-bottom:40px">Fait avec ❤️ pour le parc du lac de Poses.</footer>
+{% block scripts %}{% endblock %}
+</body>
+</html>

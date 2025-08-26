@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil{% endblock %}
+
+{% block body %}
+  <div class="card">
+    <h1 style="margin-top:0">Bienvenue sur Poses Rental</h1>
+    <p>Gérez votre matériel et vos commandes de location simplement.</p>
+    <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:12px">
+      <a class="btn btn-primary" href="{{ path('equipment_index') }}">Gérer le matériel</a>
+      <a class="btn btn-outline" href="{{ path('order_index') }}">Gérer les commandes</a>
+    </div>
+  </div>
+
+  <div class="grid grid-2" style="margin-top:16px">
+    <div class="card">
+      <div style="opacity:.8">Matériels</div>
+      <div style="font-size:32px; font-weight:700">{{ equipmentCount }}</div>
+    </div>
+    <div class="card">
+      <div style="opacity:.8">Commandes</div>
+      <div style="font-size:32px; font-weight:700">{{ openOrders }}</div>
+    </div>
+  </div>
+{% endblock %}

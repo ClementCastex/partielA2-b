@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier matériel{% endblock %}
+
+{% block breadcrumb %}
+  {% include 'partials/_breadcrumb.html.twig' with { items: [
+    { label: 'Accueil', url: path('home_index') },
+    { label: 'Matériel', url: path('equipment_index') },
+    { label: 'Modifier', url: '#' }
+  ] } %}
+{% endblock %}
+
+{% block body %}
+<div class="card">
+  <h1 style="margin-top:0">Modifier matériel</h1>
+  {{ form_start(form) }}
+    <div class="form-group">{{ form_label(form.name) }}{{ form_widget(form.name) }}{{ form_errors(form.name) ? '<div class="form-error">' ~ form_errors(form.name) ~ '</div>' }}</div>
+    <div class="form-group">{{ form_label(form.quantityAvailable) }}{{ form_widget(form.quantityAvailable, {attr:{min:0}}) }}</div>
+    <div class="form-group">{{ form_label(form.pricePerDay) }}{{ form_widget(form.pricePerDay) }}</div>
+    <div style="display:flex; gap:8px; margin-top:8px">
+      <button class="btn btn-primary">Mettre à jour</button>
+      <a class="btn btn-outline" href="{{ path('equipment_index') }}">Retour</a>
+    </div>
+  {{ form_end(form) }}
+</div>
+{% endblock %}
+
+

@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Matériel{% endblock %}
+
+{% block breadcrumb %}
+  {% include 'partials/_breadcrumb.html.twig' with { items: [
+    { label: 'Accueil', url: path('home_index') },
+    { label: 'Matériel', url: path('equipment_index') }
+  ] } %}
+{% endblock %}
+
+{% block body %}
+<div class="card">
+  <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:8px">
+    <div>
+      <h1 style="margin:0">Matériel</h1>
+      <div class="form-help">Liste du matériel disponible à la location.</div>
+    </div>
+    <a class="btn btn-primary" href="{{ path('equipment_new') }}">Nouveau</a>
+  </div>
+  <div class="scroll-x">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nom</th>
+          <th>Quantité</th>
+          <th>Prix/jour</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for e in equipments %}
+        <tr>
+          <td>{{ e.id }}</td>
+          <td>{{ e.name }}</td>
+          <td>{{ e.quantityAvailable }}</td>
+          <td>{{ e.pricePerDay|number_format(2, '.', ' ') }} €</td>
+          <td>
+            <a class="btn btn-outline" href="{{ path('equipment_edit', {id: e.id}) }}">Modifier</a>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5"><em>Aucun matériel</em></td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+
