@@ -16,7 +16,7 @@ composer install
 ## Configuration
 Créez `.env.local` avec votre URL de base de données (exemple) :
 ```bash
-printf 'DATABASE_URL="mysql://root:toor@127.0.0.1:3306/partielA2-b?serverVersion=10.11&charset=utf8mb4"\n' > .env.local
+printf 'DATABASE_URL="mysql://nom:utilisateur@127.0.0.1:3306/nom_de_la_db?serverVersion=10.11&charset=utf8mb4"\n' > .env.local
 ```
 
 ## Base de données
