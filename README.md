@@ -1,4 +1,6 @@
-# Location Rental - Symfony
+# lac de Poses - Gestion de locations (Symfony)
+
+Application Symfony (Twig + Doctrine ORM + Migrations) pour gérer le matériel et les locations.
 
 ## Prérequis
 - PHP 8.2+
@@ -12,46 +14,61 @@ composer install
 ```
 
 ## Configuration
-Créez `.env.local` avec votre URL de base de données (exemple fourni) :
+Créez `.env.local` avec votre URL de base de données (exemple) :
 ```bash
 printf 'DATABASE_URL="mysql://root:toor@127.0.0.1:3306/partielA2-b?serverVersion=10.11&charset=utf8mb4"\n' > .env.local
 ```
 
-## Création du schéma
+## Base de données
 ```bash
 php bin/console doctrine:database:create --if-not-exists
 php bin/console doctrine:migrations:migrate -n
 ```
 
-## Démarrer le serveur
+## Lancer
 Avec Symfony CLI :
 ```bash
 symfony serve -d
 ```
-Ou avec PHP interne :
+Ou PHP interne :
 ```bash
 php -S 127.0.0.1:8000 -t public
 ```
 
 ## Fonctionnalités
-- Gestion du matériel: liste, création, édition (pas de suppression)
-- Commandes: création avec sélection de matériel et quantités, affichage d'une commande avec total, restitution (ré-incrémente le stock et supprime la commande)
+- Matériel: liste, création, édition (pas de suppression)
+- Locations: création (ajout dynamique de lignes matériel/quantité), édition, affichage avec total, restitution (ré-incrémente le stock et supprime la location)
+- Validation: pas de stock négatif, champs requis, prix formaté
 
-## Routes principales
-- Accueil: `/`
+## Navigation
+- Accueil: `/` (stats + CTA)
 - Matériel: `/equipment`
-- Commandes: `/orders`
+- Locations: `/orders`
 
-## Design & Navigation
-- Palette: primary `#5B348B`, gray-900 `#23272A`, gray-800 `#2C2F33`, accent `#CCAA1D`, white `#F7F3F7`.
-- Styles globaux: `assets/styles/app.css` (chargé via `{{ asset('styles/app.css') }}` dans `templates/base.html.twig`).
-- Layout: header sticky avec liens Accueil, Matériel, Commandes; contenu dans `.wrapper`; footer minimal.
-- Composants utilitaires: `.btn`, `.btn-primary`, `.btn-outline`, `.card`, `.table`, `.badge`, `.form-group`, `.flash-*`.
-- Breadcrumb: `templates/partials/_breadcrumb.html.twig`, inclus via le block `breadcrumb` de chaque page.
-- Filtre Twig monnaie: `|money` (défini dans `src/Twig/AppExtension.php`).
+## Design & Assets
+- Styles globaux: `public/assets/app.css`
+- Layout: `templates/base.html.twig` (navbar, flash, container)
+- Composants utiles: `.btn`, `.btn-primary`, `.btn-outline`, `.card`, `.table`, `.badge`, `.form`, `.input`, `.breadcrumb`
+- Filtre Twig monnaie: `|money` via `src/Twig/AppExtension.php`
 
-### Ajouter une entrée de menu
-Dans `templates/base.html.twig`, ajoutez un lien dans `<div class="nav-links">` et gérez l'état actif via `aria-current="page"` selon `app.request.getPathInfo()`.
+## Service métier
+- `src/Service/RentalService.php`
+  - `createOrder(customerName, equipmentIdToQuantity)`
+  - `updateOrder(order, customerName, equipmentIdToQuantity)`
+  - `returnOrder(order)`
+  - `calculateTotalPerDay(order)`
 
-## Notes
-- Pas d'authentification, rendu via Twig uniquement.
+## Publier sur GitHub (manuel)
+1) Initialiser le dépôt si besoin
+```bash
+git init
+git add .
+git commit -m "feat: initial implementation (lac de Poses)"
+```
+2) Créer un repo vide sur GitHub (nom suggéré: `lac-de-poses`)
+3) Lier et pousser
+```bash
+git branch -M main
+git remote add origin https://github.com/<votre-utilisateur>/lac-de-poses.git
+git push -u origin main
+```
